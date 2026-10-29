@@ -14,7 +14,11 @@ const allowlist = loadAllowlist(allowlistPath);
 
 function walkDir(dir) {
   const results = [];
-  try { if (!statSync(dir).isDirectory()) return results; } catch { return results; }
+  try {
+    if (!statSync(dir).isDirectory()) return results;
+  } catch {
+    return results;
+  }
   for (const entry of readdirSync(dir)) {
     const full = join(dir, entry);
     const stat = statSync(full);
@@ -42,7 +46,9 @@ async function runCiMode(baseRef) {
     try {
       const content = readFileSync(join(root, file), 'utf8');
       allViolations.push(...scanContent(file, content, allowlist, root));
-    } catch { /* deleted */ }
+    } catch {
+      /* deleted */
+    }
   }
   return allViolations;
 }
@@ -61,7 +67,8 @@ const args = process.argv.slice(2);
 let violations = [];
 
 if (args.includes('--all')) violations = await runScanAll();
-else if (args.includes('--base-ref')) violations = await runCiMode(args[args.indexOf('--base-ref') + 1]);
+else if (args.includes('--base-ref'))
+  violations = await runCiMode(args[args.indexOf('--base-ref') + 1]);
 else violations = await runHookMode();
 
 if (violations.length > 0) {

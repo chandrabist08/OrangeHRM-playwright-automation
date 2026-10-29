@@ -23,7 +23,10 @@ if (!existsSync(resultsPath)) {
 const results = JSON.parse(readFileSync(resultsPath, 'utf8'));
 const suites = results.suites ?? [];
 
-let total = 0, passed = 0, failed = 0, skipped = 0;
+let total = 0,
+  passed = 0,
+  failed = 0,
+  skipped = 0;
 function countSpecs(suite) {
   for (const spec of suite.specs ?? []) {
     for (const test of spec.tests ?? []) {

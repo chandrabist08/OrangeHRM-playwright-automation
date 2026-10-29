@@ -1,7 +1,7 @@
 import { readFileSync, writeFileSync } from 'fs';
 import { resolve } from 'path';
 
-const [,, requirementId, verdict] = process.argv;
+const [, , requirementId, verdict] = process.argv;
 if (!requirementId || !verdict) {
   console.error('Usage: node scripts/record-evidence.mjs <requirementId> <PASS|BLOCK>');
   process.exit(1);

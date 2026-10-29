@@ -5,7 +5,9 @@ const root = process.cwd();
 const harnessConfig = resolve(root, 'harness.config.json');
 
 if (!existsSync(harnessConfig)) {
-  console.warn('⚠️  harness.config.json not found — run: node harness/profiles/bin/compose-harness-config.mjs');
+  console.warn(
+    '⚠️  harness.config.json not found — run: node harness/profiles/bin/compose-harness-config.mjs',
+  );
   process.exit(0);
 }
 

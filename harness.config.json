@@ -2,25 +2,28 @@
   "framework": "playwright",
   "pattern": "helper-first",
   "architecture": "Config → Helpers → Tests",
-  "project": {
-    "testRoot": "playwright",
-    "configRoot": "playwright/configs",
-    "commandRoot": "playwright/support/helpers/common",
-    "specGlob": "playwright/tests/**/*.spec.ts",
-    "pattern": "helper-first"
-  },
   "testRoot": "playwright",
   "configRoot": "playwright/configs",
-  "commandRoot": "playwright/support/helpers/common",
+  "commandRoot": "playwright/support/helpers",
   "specGlob": "playwright/tests/**/*.spec.ts",
   "effortLevel": "high",
   "gateRepairLimit": 3,
-  "auth": { "strategy": "storage-state" },
-  "testData": { "strategy": "fresh" },
-  "credentials": { "source": "ci-secret" },
+  "auth": {
+    "strategy": "storage-state"
+  },
+  "testData": {
+    "strategy": "fresh"
+  },
+  "credentials": {
+    "source": "ci-secret"
+  },
   "adapters": {
-    "claude": { "enabled": true },
-    "copilot": { "enabled": true }
+    "claude": {
+      "enabled": true
+    },
+    "copilot": {
+      "enabled": true
+    }
   },
   "permissions": {
     "allow": [
@@ -36,14 +39,25 @@
       "Bash(grep -r* playwright/*)",
       "Bash(find playwright/*)"
     ],
-    "deny": ["WebSearch"]
+    "deny": [
+      "WebSearch"
+    ]
   },
   "defaultMode": "plan",
   "hooks": {
-    "prompt": ["harness-config-gate.mjs", "prompt-duplication-guard.mjs"],
-    "preWrite": ["pre-validate-playwright-rules.mjs"],
-    "postWrite": ["validate-playwright-rules.mjs"],
-    "stop": ["session-end-reminder.mjs"]
+    "prompt": [
+      "harness-config-gate.mjs",
+      "prompt-duplication-guard.mjs"
+    ],
+    "preWrite": [
+      "pre-validate-playwright-rules.mjs"
+    ],
+    "postWrite": [
+      "validate-playwright-rules.mjs"
+    ],
+    "stop": [
+      "session-end-reminder.mjs"
+    ]
   },
   "rules": {
     "block": [

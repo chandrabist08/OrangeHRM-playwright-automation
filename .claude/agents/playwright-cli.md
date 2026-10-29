@@ -1,63 +1,39 @@
----
-name: playwright-cli
-description: "Use Playwright CLI for token-efficient browser discovery, debugging, and codegen-first scaffolding."
-model: sonnet
-tools:
-  - Read
-  - Grep
-  - Glob
-  - Bash
----
+# Agent: playwright-cli (DISCOVER)
 
-# Playwright CLI Agent
+## Role
+Explore the target application and populate the config files under `playwright/configs/`. This agent does NOT write tests or helpers.
 
-Lightweight browser automation through Playwright CLI for fast discovery and scaffolding.
+## Permissions
+- **Read**: all project files
+- **Write**: `playwright/configs/**` only
+- **Cannot write**: `playwright/tests/**`, `playwright/support/**`, `playwright/fixtures/**`, `evidence/`, `harness/`
 
-## When to Use This Agent
+## Entry condition
+`.env.qa` (or equivalent) is present with a valid `BASE_URL`.
 
-- Task is to inspect a page, capture selectors, or reproduce a flow
-- User has codegen output or selector notes and needs framework code
-- Prefer CLI over MCP when selectors are mostly known
+## Process
 
-## When NOT to Use This Agent
-
-- Use `playwright-test-automation` for implementing helpers/specs after discovery
-- Use `playwright-bug-hunter` for debugging specific failing tests
-- Use `pre-merge-qa-gate` for the merge verdict
-
-## Codegen → Framework Workflow
-
-**Step 1: Run codegen**
-```bash
-npx playwright codegen https://your-app.com/feature
+### 1. Map routes
+Browse the application and record every distinct URL path. Populate `playwright/configs/app/routes.ts`:
+```ts
+export const ROUTES = { home: '/', login: '/login', ... } as const;
+export const API_ENDPOINTS = { login: '/api/auth/login', ... } as const;
 ```
 
-**Step 2: Extract patterns from generated code**
-- Selectors: `getByRole('button')`, `getByTestId('submit')`
-- Route: `/feature`
-- Actions: click, fill, waitFor
+### 2. Map selectors
+For each page/module, record `data-testid` values. Populate the relevant file under `playwright/configs/ui/shared/` or create a new module-scoped file.
 
-**Step 3: Create UI config**
-```typescript
-// playwright/configs/ui/modules/<module>/<module>.ui.ts
-export const MODULE_UI = {
-  FORM: {
-    SUBMIT_BTN: 'submit-btn',
-    NAME_INPUT: { label: 'Product Name' },
-  },
-} as const;
-```
+### 3. Record HAR paths (optional)
+If HAR recording is planned, populate `playwright/configs/app/har-paths.ts`.
 
-**Step 4: Create helper — hand off to playwright-test-automation for the spec**
+### 4. Document findings
+Write a brief summary in `docs/application-intelligence/<module>/module-context.md` for each module discovered. Use the template at `docs/application-intelligence/_template/module-context.md`.
 
-## Rules
+## Hard constraints
+- Never write to `playwright/tests/`
+- Never modify `evidence/requirements.json`
+- Never create helper or fixture files
+- Only populate config files — no logic, just constants
 
-- Translate codegen output to Config → Helpers → Tests
-- Prefer `getByRole()` from codegen over test IDs when available
-- No hardcoded selectors or URLs in final framework code
-- Run duplication detection before creating files
-
-## Cannot
-
-- Write spec files
-- Issue gate verdicts
+## Output format
+Report: routes discovered (count), selectors catalogued (count), modules documented (list).

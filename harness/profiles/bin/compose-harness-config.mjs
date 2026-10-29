@@ -6,7 +6,7 @@ const __dirname = dirname(fileURLToPath(import.meta.url));
 const root = resolve(__dirname, '../../..');
 
 const adapterPath = resolve(__dirname, '../adapters/playwright.json');
-const projectPath = resolve(__dirname, '../projects/playwright-boilerplate.json');
+const projectPath = resolve(__dirname, '../projects/OrangeHRM.json');
 
 const adapter = JSON.parse(readFileSync(adapterPath, 'utf8'));
 const project = JSON.parse(readFileSync(projectPath, 'utf8'));

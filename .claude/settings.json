@@ -1,59 +1,5 @@
 {
-  "$schema": "https://json.schemastore.org/claude-code-settings.json",
-  "_generated": "From harness.config.json by scripts/engine/sync.mjs. Do not edit.",
-  "hooks": {
-    "UserPromptSubmit": [
-      {
-        "hooks": [
-          {
-            "type": "command",
-            "command": "node -e \"const p=require('node:path'),u=require('node:url');const r=process.env.CLAUDE_PROJECT_DIR||process.cwd();import(u.pathToFileURL(p.join(r,'.claude','hooks',process.argv[1])).href)\" \"harness-config-gate.mjs\""
-          },
-          {
-            "type": "command",
-            "command": "node -e \"const p=require('node:path'),u=require('node:url');const r=process.env.CLAUDE_PROJECT_DIR||process.cwd();import(u.pathToFileURL(p.join(r,'.claude','hooks',process.argv[1])).href)\" \"prompt-duplication-guard.mjs\""
-          }
-        ]
-      }
-    ],
-    "PreToolUse": [
-      {
-        "matcher": "Edit|Write",
-        "hooks": [
-          {
-            "type": "command",
-            "command": "node -e \"const p=require('node:path'),u=require('node:url');const r=process.env.CLAUDE_PROJECT_DIR||process.cwd();import(u.pathToFileURL(p.join(r,'.claude','hooks',process.argv[1])).href)\" \"pre-validate-playwright-rules.mjs\""
-          }
-        ]
-      }
-    ],
-    "PostToolUse": [
-      {
-        "matcher": "Edit|Write",
-        "hooks": [
-          {
-            "type": "command",
-            "command": "node -e \"const p=require('node:path'),u=require('node:url');const r=process.env.CLAUDE_PROJECT_DIR||process.cwd();import(u.pathToFileURL(p.join(r,'.claude','hooks',process.argv[1])).href)\" \"validate-playwright-rules.mjs\""
-          }
-        ]
-      }
-    ],
-    "Stop": [
-      {
-        "hooks": [
-          {
-            "type": "command",
-            "command": "node -e \"const p=require('node:path'),u=require('node:url');const r=process.env.CLAUDE_PROJECT_DIR||process.cwd();import(u.pathToFileURL(p.join(r,'.claude','hooks',process.argv[1])).href)\" \"session-end-reminder.mjs\""
-          }
-        ]
-      }
-    ]
-  },
-  "effortLevel": "high",
-  "alwaysThinkingEnabled": true,
-  "autoMemoryEnabled": true,
   "permissions": {
-    "defaultMode": "plan",
     "allow": [
       "Bash(npm test*)",
       "Bash(npm run test*)",
@@ -68,15 +14,10 @@
       "Bash(find playwright/*)"
     ],
     "deny": [
-        "WebSearch",
-        "Bash(git push origin master*)",
-        "Bash(git push * master*)",
-        "Bash(git push --force*)",
-        "Bash(git push -f*)"
-          ]
+      "WebSearch"
+    ]
   },
   "env": {
-    "ENV": "qa",
-    "PLAYWRIGHT_SKIP_BROWSER_DOWNLOAD": "0"
+    "ENV": "qa"
   }
 }
