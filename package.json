@@ -1,0 +1,40 @@
+{
+  "name": "playwright-harness",
+  "version": "1.0.0",
+  "description": "Helper-first Playwright QA automation harness",
+  "type": "module",
+  "scripts": {
+    "test": "playwright test --pass-with-no-tests",
+    "test:smoke": "playwright test --grep @smoke --pass-with-no-tests",
+    "test:headed": "playwright test --headed --pass-with-no-tests",
+    "report:html": "playwright show-report",
+    "lint": "eslint \"playwright/**/*.ts\" \"scripts/**/*.mjs\"",
+    "format": "prettier --write \"playwright/**/*.ts\" \"scripts/**/*.mjs\"",
+    "format:check": "prettier --check \"playwright/**/*.ts\" \"scripts/**/*.mjs\"",
+    "tsc:check": "tsc --noEmit",
+    "harness:sync": "node scripts/engine/sync.mjs",
+    "harness:check": "node scripts/engine/check-drift.mjs",
+    "harness:ready": "node scripts/engine/config-ready.mjs",
+    "harness:test": "playwright test --pass-with-no-tests",
+    "harness:format:check": "prettier --check \"playwright/**/*.ts\"",
+    "check:rules": "node scripts/engine/validate-playwright-rules.mjs --all",
+    "check:requirements": "node scripts/check-requirement-consistency.mjs",
+    "evidence:build": "node scripts/evidence.mjs",
+    "evidence:effort": "node scripts/evidence.mjs --effort",
+    "check:ddt-fixtures": "echo 'DDT fixture check: no DDT specs yet.'",
+    "check:locator-strategy": "node scripts/check-locator-strategy.mjs",
+    "check:doc-impact": "node scripts/check-doc-impact.mjs",
+    "harness:lock": "node scripts/engine/lock-profile.mjs",
+    "harness:compose": "node harness/profiles/bin/compose-harness-config.mjs",
+    "verify": "npm run harness:check && npm run harness:ready && npm run harness:test && npm run harness:format:check && npm run check:rules && npm run check:requirements && tsc --noEmit && npm test && npm run evidence:build",
+    "bootstrap": "node scripts/bootstrap.js"
+  },
+  "devDependencies": {
+    "@playwright/test": "^1.48.0",
+    "@types/node": "^22.20.5",
+    "allure-playwright": "^3.0.0",
+    "dotenv": "^16.0.0",
+    "prettier": "^3.0.0",
+    "typescript": "^5.6.0"
+  }
+}
