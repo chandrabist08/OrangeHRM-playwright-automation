@@ -39,9 +39,29 @@ export default defineConfig({
   },
 
   projects: [
+    // ── Setup: runs once to produce the admin auth storage state ──────────
+    {
+      name: 'setup',
+      testDir: './playwright/support/setup',
+      testMatch: /admin\.setup\.ts/,
+    },
+
+    // ── Authenticated project: depends on setup, skips @no-auth tests ─────
     {
       name: 'chromium',
+      use: {
+        ...devices['Desktop Chrome'],
+        storageState: process.env.ADMIN_AUTH_STATE ?? 'playwright/storage/auth/admin.json',
+      },
+      dependencies: ['setup'],
+      grepInvert: /@no-auth/,
+    },
+
+    // ── Unauthenticated project: for tests that must not carry a session ──
+    {
+      name: 'no-auth',
       use: { ...devices['Desktop Chrome'] },
+      grep: /@no-auth/,
     },
   ],
 

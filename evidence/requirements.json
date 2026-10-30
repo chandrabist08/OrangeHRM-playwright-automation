@@ -1,4 +1,902 @@
 {
   "version": 1,
-  "requirements": []
+  "requirements": [
+    {
+      "id": "AUTH-LOGIN-001",
+      "module": "authentication",
+      "title": "Admin can log in with valid credentials",
+      "preconditions": [
+        "Admin credentials are available via CI secret / .env",
+        "The OrangeHRM demo instance is reachable at https://opensource-demo.orangehrmlive.com",
+        "No active session exists (storageState is clean for this test)"
+      ],
+      "acceptanceCriteria": [
+        "Given the login page is displayed at /web/index.php/auth/login",
+        "When the Admin enters valid username and password and clicks Login",
+        "Then the browser navigates to the dashboard at /web/index.php/dashboard/index",
+        "And the top navigation bar displays the authenticated user's name"
+      ],
+      "expectedOutcome": "Admin is authenticated and the dashboard page is fully loaded with no console errors",
+      "scenarioType": "SMOKE",
+      "priority": "P0",
+      "status": "draft",
+      "frameworkTier": "ui",
+      "source": "project-context.md / OrangeHRM auth requirements"
+    },
+    {
+      "id": "EMP-SEARCH-001",
+      "module": "employee-management",
+      "title": "Admin can search for an employee by name",
+      "preconditions": [
+        "Admin is authenticated (storageState)",
+        "At least one employee record exists in the system"
+      ],
+      "acceptanceCriteria": [
+        "Given the Admin is on the Employee List page at /web/index.php/pim/viewEmployeeList",
+        "When the Admin types a valid employee name into the search field and clicks Search",
+        "Then the results table displays only employees whose names match the search term",
+        "And when no match exists the table shows a 'No Records Found' message"
+      ],
+      "expectedOutcome": "Employee list filters correctly and the 'No Records Found' state renders when the search yields zero results",
+      "scenarioType": "SMOKE",
+      "priority": "P0",
+      "frameworkTier": "ui",
+      "status": "active",
+      "source": "module-context.md / employee-management"
+    },
+    {
+      "id": "RECRUIT-VACANCY-001",
+      "module": "recruitment",
+      "title": "Admin can view the list of active job vacancies",
+      "preconditions": [
+        "Admin is authenticated (storageState)",
+        "At least one active vacancy exists in the system"
+      ],
+      "acceptanceCriteria": [
+        "Given the Admin is authenticated",
+        "When the Admin navigates to /web/index.php/recruitment/viewJobVacancy",
+        "Then the vacancies list page loads without error",
+        "And the table contains at least one row with vacancy name, job title, and status columns"
+      ],
+      "expectedOutcome": "The recruitment vacancies list renders with at least one vacancy row and no console errors",
+      "scenarioType": "SMOKE",
+      "priority": "P0",
+      "frameworkTier": "ui",
+      "status": "draft",
+      "source": "module-context.md / recruitment"
+    },
+    {
+      "id": "AUTH-LOGIN-002",
+      "module": "authentication",
+      "title": "Login fails with invalid credentials and shows an error",
+      "preconditions": [
+        "No active session exists",
+        "The OrangeHRM demo instance is reachable"
+      ],
+      "acceptanceCriteria": [
+        "Given the login page is displayed",
+        "When the user enters an incorrect username or password and clicks Login",
+        "Then the page does not navigate away from /web/index.php/auth/login",
+        "And an error message containing 'Invalid credentials' is visible",
+        "And no session cookie is set"
+      ],
+      "expectedOutcome": "The login page remains active and an error message is displayed; no authenticated session is created",
+      "scenarioType": "REGRESSION",
+      "priority": "P1",
+      "frameworkTier": "ui",
+      "status": "draft",
+      "source": "module-context.md / authentication"
+    },
+    {
+      "id": "AUTH-LOGOUT-001",
+      "module": "authentication",
+      "title": "Authenticated user can log out and session is invalidated",
+      "preconditions": [
+        "Admin is authenticated (storageState)",
+        "The dashboard page is loaded"
+      ],
+      "acceptanceCriteria": [
+        "Given the Admin is logged in and on the dashboard",
+        "When the Admin opens the user menu and clicks Logout",
+        "Then the browser redirects to /web/index.php/auth/login",
+        "And navigating back via the browser Back button does not restore the authenticated session"
+      ],
+      "expectedOutcome": "The session is invalidated and the login page is shown; back-navigation does not bypass the login gate",
+      "scenarioType": "REGRESSION",
+      "priority": "P1",
+      "frameworkTier": "ui",
+      "status": "draft",
+      "source": "module-context.md / authentication"
+    },
+    {
+      "id": "EMP-ADD-001",
+      "module": "employee-management",
+      "title": "Admin can add a new employee with required fields",
+      "preconditions": [
+        "Admin is authenticated (storageState)",
+        "A unique synthetic first and last name is prepared (AutoTest_ prefix)",
+        "Cleanup strategy is in place: DELETE /api/v2/pim/employees after test"
+      ],
+      "acceptanceCriteria": [
+        "Given the Admin is on the Add Employee page at /web/index.php/pim/addEmployee",
+        "When the Admin fills in First Name, Last Name, and Employee ID and clicks Save",
+        "Then the system creates the employee record and navigates to the employee's personal details page",
+        "And the API GET /api/v2/pim/employees returns the newly created employee",
+        "And the employee record is deleted via API after the test"
+      ],
+      "expectedOutcome": "New employee record is created and retrievable via API; record is cleaned up after test completion",
+      "scenarioType": "REGRESSION",
+      "priority": "P1",
+      "frameworkTier": "ui+api",
+      "status": "active",
+      "source": "module-context.md / employee-management"
+    },
+    {
+      "id": "EMP-EDIT-001",
+      "module": "employee-management",
+      "title": "Admin can update an existing employee's personal details",
+      "preconditions": [
+        "Admin is authenticated (storageState)",
+        "A synthetic employee record exists (created via API in test setup)",
+        "Cleanup strategy is in place: DELETE /api/v2/pim/employees after test"
+      ],
+      "acceptanceCriteria": [
+        "Given the Admin is on the personal details page for a known employee",
+        "When the Admin changes the employee's first name and clicks Save",
+        "Then a success notification is displayed",
+        "And the API GET /api/v2/pim/employees/{id} returns the updated first name"
+      ],
+      "expectedOutcome": "Employee personal details are updated and persisted; the API reflects the change",
+      "scenarioType": "REGRESSION",
+      "priority": "P1",
+      "frameworkTier": "ui+api",
+      "status": "active",
+      "source": "module-context.md / employee-management"
+    },
+    {
+      "id": "LEAVE-APPROVE-001",
+      "module": "leave-management",
+      "title": "Admin can approve a pending leave request",
+      "preconditions": [
+        "Admin is authenticated (storageState)",
+        "A pending leave request exists for a synthetic employee (created via API in test setup)",
+        "Cleanup strategy is in place: delete the leave request and the synthetic employee after test"
+      ],
+      "acceptanceCriteria": [
+        "Given the Admin is on the Leave List page at /web/index.php/leave/viewLeaveList",
+        "When the Admin finds the pending leave request and clicks Approve",
+        "Then a success notification is displayed",
+        "And the API GET /api/v2/leave/employees/{empNumber}/leave-requests/{id} returns status 'Approved'"
+      ],
+      "expectedOutcome": "Leave request status changes to 'Approved' and is reflected in the API; cleanup runs after test",
+      "scenarioType": "REGRESSION",
+      "priority": "P1",
+      "frameworkTier": "ui+api",
+      "status": "draft",
+      "source": "module-context.md / leave-management"
+    },
+    {
+      "id": "RECRUIT-VACANCY-ADD-001",
+      "module": "recruitment",
+      "title": "Admin can create a new job vacancy",
+      "preconditions": [
+        "Admin is authenticated (storageState)",
+        "At least one job title is configured in the system",
+        "Cleanup strategy is in place: DELETE /api/v2/recruitment/vacancies after test"
+      ],
+      "acceptanceCriteria": [
+        "Given the Admin is on the Add Vacancy page at /web/index.php/recruitment/addJobVacancy",
+        "When the Admin fills in Vacancy Name, selects a Job Title, and clicks Save",
+        "Then the system creates the vacancy and navigates to the vacancy list or detail page",
+        "And the API GET /api/v2/recruitment/vacancies returns the newly created vacancy",
+        "And the vacancy is deleted via API after the test"
+      ],
+      "expectedOutcome": "New job vacancy is created and retrievable via API; vacancy is cleaned up after test",
+      "scenarioType": "REGRESSION",
+      "priority": "P1",
+      "frameworkTier": "ui+api",
+      "status": "draft",
+      "source": "module-context.md / recruitment"
+    },
+    {
+      "id": "RECRUIT-CANDIDATE-001",
+      "module": "recruitment",
+      "title": "Admin can view candidate applications for a vacancy",
+      "preconditions": [
+        "Admin is authenticated (storageState)",
+        "A vacancy with at least one candidate exists (or the page correctly handles the zero-candidate state)"
+      ],
+      "acceptanceCriteria": [
+        "Given the Admin is on the Candidates page at /web/index.php/recruitment/viewCandidates",
+        "When the Admin filters by a specific vacancy",
+        "Then the candidate list shows only candidates for that vacancy",
+        "And when no candidates exist the 'No Records Found' state is displayed"
+      ],
+      "expectedOutcome": "Candidate list filters correctly by vacancy; zero-result state renders the expected empty message",
+      "scenarioType": "REGRESSION",
+      "priority": "P1",
+      "frameworkTier": "ui",
+      "status": "draft",
+      "source": "module-context.md / recruitment"
+    },
+    {
+      "id": "EMP-DELETE-001",
+      "module": "employee-management",
+      "title": "Admin can delete an employee record",
+      "preconditions": [
+        "Admin is authenticated (storageState)",
+        "A synthetic employee record exists (created via API in test setup)",
+        "The employee has no dependencies that block deletion (no pending leave, no active payroll)"
+      ],
+      "acceptanceCriteria": [
+        "Given the Admin is on the Employee List page",
+        "When the Admin selects the synthetic employee row and clicks Delete, then confirms the deletion",
+        "Then a success notification is displayed",
+        "And the API GET /api/v2/pim/employees with the employee's name returns zero results"
+      ],
+      "expectedOutcome": "Employee record is permanently deleted and no longer retrievable via API or search",
+      "scenarioType": "REGRESSION",
+      "priority": "P2",
+      "frameworkTier": "ui+api",
+      "status": "active",
+      "source": "module-context.md / employee-management"
+    },
+    {
+      "id": "EMP-FILTER-001",
+      "module": "employee-management",
+      "title": "Admin can filter the employee list by Employment Status",
+      "preconditions": [
+        "Admin is authenticated (storageState)",
+        "At least one employee with a known Employment Status exists in the system"
+      ],
+      "acceptanceCriteria": [
+        "Given the Admin is on the Employee List page at /web/index.php/pim/viewEmployeeList",
+        "When the Admin selects an Employment Status (e.g. 'Full-Time Permanent') from the filter and clicks Search",
+        "Then the results table displays only employees whose Employment Status matches the selected value",
+        "And when the selected status has no matching employees the table shows a 'No Records Found' message"
+      ],
+      "expectedOutcome": "Employee list is correctly narrowed to the selected Employment Status; empty-state renders when no match exists",
+      "scenarioType": "SMOKE",
+      "priority": "P0",
+      "frameworkTier": "ui",
+      "status": "active",
+      "source": "module-context.md / employee-management"
+    },
+    {
+      "id": "EMP-VALIDATE-001",
+      "module": "employee-management",
+      "title": "Required fields block save when adding an employee",
+      "preconditions": [
+        "Admin is authenticated (storageState)",
+        "Admin is on the Add Employee page at /web/index.php/pim/addEmployee"
+      ],
+      "acceptanceCriteria": [
+        "Given the Admin is on the Add Employee page",
+        "When the Admin submits the form without entering First Name and Last Name",
+        "Then inline validation error messages appear on the First Name and Last Name fields",
+        "And the form is not submitted and no new employee record is created via the API"
+      ],
+      "expectedOutcome": "Validation errors are shown on required fields; no employee record is created",
+      "scenarioType": "REGRESSION",
+      "priority": "P1",
+      "frameworkTier": "ui",
+      "status": "active",
+      "source": "module-context.md / employee-management"
+    },
+    {
+      "id": "EMP-CONTACT-001",
+      "module": "employee-management",
+      "title": "Admin can update employee contact details",
+      "preconditions": [
+        "Admin is authenticated (storageState)",
+        "A synthetic employee record exists (created via API in test setup)",
+        "Cleanup strategy is in place: DELETE /api/v2/pim/employees after test"
+      ],
+      "acceptanceCriteria": [
+        "Given the Admin is on the Contact Details tab at /web/index.php/pim/viewContactDetails/empNumber/{id}",
+        "When the Admin enters a work email and work telephone number and clicks Save",
+        "Then a success notification is displayed",
+        "And the API GET /api/v2/pim/employees/{id}/contact-details returns the updated work email and phone"
+      ],
+      "expectedOutcome": "Employee contact details are saved and persisted; the API reflects the updated values",
+      "scenarioType": "REGRESSION",
+      "priority": "P1",
+      "frameworkTier": "ui+api",
+      "status": "active",
+      "source": "module-context.md / employee-management"
+    },
+    {
+      "id": "EMP-EMERGENCY-001",
+      "module": "employee-management",
+      "title": "Admin can add an emergency contact for an employee",
+      "preconditions": [
+        "Admin is authenticated (storageState)",
+        "A synthetic employee record exists (created via API in test setup)",
+        "Cleanup strategy is in place: DELETE /api/v2/pim/employees after test (cascades sub-records)"
+      ],
+      "acceptanceCriteria": [
+        "Given the Admin is on the Emergency Contacts tab at /web/index.php/pim/viewEmergencyContacts/empNumber/{id}",
+        "When the Admin clicks Add, fills in Name, Relationship, and a phone number, and clicks Save",
+        "Then a success notification is displayed",
+        "And the API GET /api/v2/pim/employees/{id}/emergency-contacts returns the newly added contact"
+      ],
+      "expectedOutcome": "Emergency contact is saved and retrievable via API; parent employee DELETE cleans up the contact",
+      "scenarioType": "REGRESSION",
+      "priority": "P1",
+      "frameworkTier": "ui+api",
+      "status": "active",
+      "source": "module-context.md / employee-management"
+    },
+    {
+      "id": "EMP-JOB-001",
+      "module": "employee-management",
+      "title": "Admin can update employee job details",
+      "preconditions": [
+        "Admin is authenticated (storageState)",
+        "A synthetic employee record exists (created via API in test setup)",
+        "At least one Job Title and one Employment Status are configured in the system",
+        "Cleanup strategy is in place: DELETE /api/v2/pim/employees after test"
+      ],
+      "acceptanceCriteria": [
+        "Given the Admin is on the Job tab at /web/index.php/pim/viewJobDetails/empNumber/{id}",
+        "When the Admin selects a Job Title, an Employment Status, and sets a Joined Date, then clicks Save",
+        "Then a success notification is displayed",
+        "And the API GET /api/v2/pim/employees/{id}/job-details returns the updated Job Title and Employment Status"
+      ],
+      "expectedOutcome": "Job details are saved and persisted; the API reflects the updated job title, employment status, and joined date",
+      "scenarioType": "REGRESSION",
+      "priority": "P1",
+      "frameworkTier": "ui+api",
+      "status": "active",
+      "source": "module-context.md / employee-management"
+    },
+    {
+      "id": "EMP-REPORT-TO-001",
+      "module": "employee-management",
+      "title": "Admin can assign a supervisor to an employee",
+      "preconditions": [
+        "Admin is authenticated (storageState)",
+        "A synthetic employee record exists (created via API in test setup)",
+        "At least one other employee exists in the system to serve as supervisor",
+        "At least one Reporting Method is configured in Admin settings",
+        "Cleanup strategy is in place: DELETE /api/v2/pim/employees after test"
+      ],
+      "acceptanceCriteria": [
+        "Given the Admin is on the Report-To tab at /web/index.php/pim/viewReportTo/empNumber/{id}",
+        "When the Admin clicks Add in the Supervisors section, searches for a supervisor by name, selects a Reporting Method, and clicks Save",
+        "Then a success notification is displayed",
+        "And the API GET /api/v2/pim/employees/{id}/report-to returns the assigned supervisor"
+      ],
+      "expectedOutcome": "Supervisor assignment is saved and retrievable via API",
+      "scenarioType": "REGRESSION",
+      "priority": "P1",
+      "frameworkTier": "ui+api",
+      "status": "active",
+      "source": "module-context.md / employee-management"
+    },
+    {
+      "id": "EMP-QUAL-001",
+      "module": "employee-management",
+      "title": "Admin can add an education record to employee qualifications",
+      "preconditions": [
+        "Admin is authenticated (storageState)",
+        "A synthetic employee record exists (created via API in test setup)",
+        "Cleanup strategy is in place: DELETE /api/v2/pim/employees after test (cascades qualifications)"
+      ],
+      "acceptanceCriteria": [
+        "Given the Admin is on the Qualifications tab at /web/index.php/pim/viewQualifications/empNumber/{id}",
+        "When the Admin clicks Add in the Education section, fills in Level, Institute, and Year, and clicks Save",
+        "Then a success notification is displayed",
+        "And the API GET /api/v2/pim/employees/{id}/qualifications/educations returns the newly added education record"
+      ],
+      "expectedOutcome": "Education record is saved and retrievable via API; parent employee DELETE cleans up all qualification records",
+      "scenarioType": "REGRESSION",
+      "priority": "P1",
+      "frameworkTier": "ui+api",
+      "status": "active",
+      "source": "module-context.md / employee-management"
+    },
+    {
+      "id": "EMP-DEPENDANT-001",
+      "module": "employee-management",
+      "title": "Admin can add a dependant for an employee",
+      "preconditions": [
+        "Admin is authenticated (storageState)",
+        "A synthetic employee record exists (created via API in test setup)",
+        "Cleanup strategy is in place: DELETE /api/v2/pim/employees after test (cascades sub-records)"
+      ],
+      "acceptanceCriteria": [
+        "Given the Admin is on the Dependants tab at /web/index.php/pim/viewDependants/empNumber/{id}",
+        "When the Admin clicks Add, fills in Name, Relationship, and Date of Birth, and clicks Save",
+        "Then a success notification is displayed",
+        "And the API GET /api/v2/pim/employees/{id}/dependants returns the newly added dependant"
+      ],
+      "expectedOutcome": "Dependant record is saved and retrievable via API",
+      "scenarioType": "REGRESSION",
+      "priority": "P2",
+      "frameworkTier": "ui+api",
+      "status": "active",
+      "source": "module-context.md / employee-management"
+    },
+    {
+      "id": "EMP-SALARY-001",
+      "module": "employee-management",
+      "title": "Admin can add a salary component for an employee",
+      "preconditions": [
+        "Admin is authenticated (storageState)",
+        "A synthetic employee record exists (created via API in test setup)",
+        "At least one Pay Grade is configured in Admin settings",
+        "At least one salary component (e.g. 'Basic Salary') is available on the demo instance",
+        "Cleanup strategy is in place: DELETE /api/v2/pim/employees after test"
+      ],
+      "acceptanceCriteria": [
+        "Given the Admin is on the Salary tab at /web/index.php/pim/viewSalaryList/empNumber/{id}",
+        "When the Admin clicks Add, selects a Salary Component, enters an amount, selects a Pay Frequency, and clicks Save",
+        "Then a success notification is displayed",
+        "And the API GET /api/v2/pim/employees/{id}/salary-components returns the newly added component"
+      ],
+      "expectedOutcome": "Salary component is saved and retrievable via API",
+      "scenarioType": "REGRESSION",
+      "priority": "P2",
+      "frameworkTier": "ui+api",
+      "status": "active",
+      "source": "module-context.md / employee-management"
+    },
+    {
+      "id": "EMP-MEMBERSHIP-001",
+      "module": "employee-management",
+      "title": "Admin can add a professional membership for an employee",
+      "preconditions": [
+        "Admin is authenticated (storageState)",
+        "A synthetic employee record exists (created via API in test setup)",
+        "At least one Membership type is configured in Admin settings on the demo instance",
+        "Cleanup strategy is in place: DELETE /api/v2/pim/employees after test"
+      ],
+      "acceptanceCriteria": [
+        "Given the Admin is on the Memberships tab at /web/index.php/pim/viewMembership/empNumber/{id}",
+        "When the Admin clicks Add, selects a Membership, selects 'Paid by Company' or 'Paid by Individual', enters a Subscription Amount, and clicks Save",
+        "Then a success notification is displayed",
+        "And the API GET /api/v2/pim/employees/{id}/memberships returns the newly added membership"
+      ],
+      "expectedOutcome": "Membership record is saved and retrievable via API",
+      "scenarioType": "REGRESSION",
+      "priority": "P2",
+      "frameworkTier": "ui+api",
+      "status": "active",
+      "source": "module-context.md / employee-management"
+    },
+    {
+      "id": "EMP-IMMIGRATION-001",
+      "module": "employee-management",
+      "title": "Admin can add an immigration document for an employee",
+      "preconditions": [
+        "Admin is authenticated (storageState)",
+        "A synthetic employee record exists (created via API in test setup)",
+        "Cleanup strategy is in place: DELETE /api/v2/pim/employees after test"
+      ],
+      "acceptanceCriteria": [
+        "Given the Admin is on the Immigration tab at /web/index.php/pim/viewImmigration/empNumber/{id}",
+        "When the Admin clicks Add, selects Document type 'Passport', enters a Document Number and Issued Date, and clicks Save",
+        "Then a success notification is displayed",
+        "And the API GET /api/v2/pim/employees/{id}/immigration-records returns the newly added document"
+      ],
+      "expectedOutcome": "Immigration document record is saved and retrievable via API",
+      "scenarioType": "REGRESSION",
+      "priority": "P2",
+      "frameworkTier": "ui+api",
+      "status": "active",
+      "source": "module-context.md / employee-management"
+    },
+    {
+      "id": "EMP-PHOTO-001",
+      "module": "employee-management",
+      "title": "Admin can upload a profile photo for an employee",
+      "preconditions": [
+        "Admin is authenticated (storageState)",
+        "A synthetic employee record exists (created via API in test setup)",
+        "A valid JPG or PNG image file (under 1 MB) is available for upload",
+        "Cleanup strategy is in place: DELETE /api/v2/pim/employees after test"
+      ],
+      "acceptanceCriteria": [
+        "Given the Admin is on the employee's Personal Details page",
+        "When the Admin clicks the profile photo widget and selects a valid image file",
+        "Then the photo preview is displayed in the upload widget",
+        "And after saving the page, the employee's profile photo is updated and visible on subsequent page load"
+      ],
+      "expectedOutcome": "Profile photo is uploaded and displayed on the employee's profile; no error toast appears",
+      "scenarioType": "REGRESSION",
+      "priority": "P2",
+      "frameworkTier": "ui",
+      "status": "active",
+      "source": "module-context.md / employee-management"
+    },
+    {
+      "id": "LEAVE-REJECT-001",
+      "module": "leave-management",
+      "title": "Admin can reject a pending leave request",
+      "preconditions": [
+        "Admin is authenticated (storageState)",
+        "A pending leave request exists for a synthetic employee (created via API in test setup)",
+        "Cleanup strategy is in place: delete the leave request and synthetic employee after test"
+      ],
+      "acceptanceCriteria": [
+        "Given the Admin is on the Leave List page",
+        "When the Admin finds the pending leave request and clicks Reject",
+        "Then a success notification is displayed",
+        "And the API GET /api/v2/leave/employees/{empNumber}/leave-requests/{id} returns status 'Rejected'"
+      ],
+      "expectedOutcome": "Leave request status changes to 'Rejected' and is reflected in the API; cleanup runs after test",
+      "scenarioType": "REGRESSION",
+      "priority": "P2",
+      "frameworkTier": "ui+api",
+      "status": "draft",
+      "source": "module-context.md / leave-management"
+    },
+    {
+      "id": "EMP-LOGIN-001",
+      "module": "employee-management",
+      "title": "Admin can create login details for a new employee during the add-employee workflow",
+      "preconditions": [
+        "Admin is authenticated (storageState)",
+        "Admin is on the Add Employee page at /web/index.php/pim/addEmployee",
+        "A unique synthetic username is prepared (AutoTest_ prefix) that does not already exist",
+        "Cleanup strategy is in place: DELETE /api/v2/pim/employees after test (cascades the user account)"
+      ],
+      "acceptanceCriteria": [
+        "Given the Admin is on the Add Employee page",
+        "When the Admin fills in First Name and Last Name, then enables the 'Create Login Details' toggle",
+        "And enters a unique Username, a Password, the same value in Confirm Password, and sets Status to 'Enabled'",
+        "And clicks Save",
+        "Then the employee record is created and the browser navigates to the employee's Personal Details page",
+        "And the API GET /api/v2/pim/employees returns the newly created employee",
+        "And a user account with the supplied username is created and usable for authentication"
+      ],
+      "expectedOutcome": "Employee record and associated login account are created together in a single Save action; the login account is enabled and associated with the new employee",
+      "scenarioType": "REGRESSION",
+      "priority": "P1",
+      "frameworkTier": "ui+api",
+      "status": "active",
+      "source": "pim-functional-spec.md / How to Add an Employee — Create Login Details"
+    },
+    {
+      "id": "EMP-TERM-001",
+      "module": "employee-management",
+      "title": "Admin can terminate an employee with a reason, termination date, and optional note",
+      "preconditions": [
+        "Admin is authenticated (storageState)",
+        "A synthetic employee record exists with Job Details configured (created via API in test setup)",
+        "At least one Termination Reason is preconfigured under PIM > Configuration > Termination Reasons",
+        "Cleanup strategy is in place: the terminated employee record is deleted via API after the test"
+      ],
+      "acceptanceCriteria": [
+        "Given the Admin is on the Job tab at /web/index.php/pim/viewJobDetails/empNumber/{id}",
+        "When the Admin clicks 'Terminate Employment', selects a Reason from the predefined dropdown, enters a termination date equal to today, optionally adds a Note, and clicks Confirm",
+        "Then the employee is removed from the current Employee List",
+        "And when the same employee ID is searched using the 'Include: Current Employees' filter it returns no results",
+        "And when searched with 'Include: Past Employees' or 'Both' the terminated employee appears in results"
+      ],
+      "expectedOutcome": "Employee termination is recorded; the employee no longer appears in the current employee list but is retrievable as a past employee",
+      "scenarioType": "REGRESSION",
+      "priority": "P1",
+      "frameworkTier": "ui",
+      "status": "active",
+      "source": "pim-functional-spec.md / How to Terminate an Employee with a Future Date"
+    },
+    {
+      "id": "EMP-FILTER-002",
+      "module": "employee-management",
+      "title": "Admin can filter the employee list by Employee ID",
+      "preconditions": [
+        "Admin is authenticated (storageState)",
+        "At least one employee with a known Employee ID exists in the system"
+      ],
+      "acceptanceCriteria": [
+        "Given the Admin is on the Employee List page at /web/index.php/pim/viewEmployeeList",
+        "When the Admin enters a known Employee ID into the ID filter field and clicks Search",
+        "Then the results table displays only the employee whose ID exactly matches the entered value",
+        "And when a non-existent ID is entered the table shows a 'No Records Found' message"
+      ],
+      "expectedOutcome": "Employee list is narrowed to the exact Employee ID entered; the empty-state message renders when no match exists",
+      "scenarioType": "REGRESSION",
+      "priority": "P1",
+      "frameworkTier": "ui",
+      "status": "active",
+      "source": "pim-functional-spec.md / How to Filter the Employee List"
+    },
+    {
+      "id": "EMP-FILTER-003",
+      "module": "employee-management",
+      "title": "Admin can filter the employee list by Supervisor Name",
+      "preconditions": [
+        "Admin is authenticated (storageState)",
+        "At least one employee with a known assigned supervisor exists in the system"
+      ],
+      "acceptanceCriteria": [
+        "Given the Admin is on the Employee List page at /web/index.php/pim/viewEmployeeList",
+        "When the Admin types a known supervisor's name into the Supervisor Name filter and clicks Search",
+        "Then the results table displays only employees who report to that supervisor",
+        "And when a name with no reporting employees is entered the table shows a 'No Records Found' message"
+      ],
+      "expectedOutcome": "Employee list is filtered to subordinates of the named supervisor; zero-result state renders correctly",
+      "scenarioType": "REGRESSION",
+      "priority": "P1",
+      "frameworkTier": "ui",
+      "status": "active",
+      "source": "pim-functional-spec.md / How to Filter the Employee List"
+    },
+    {
+      "id": "EMP-FILTER-004",
+      "module": "employee-management",
+      "title": "Admin can filter the employee list by Job Title",
+      "preconditions": [
+        "Admin is authenticated (storageState)",
+        "At least one employee with a known Job Title exists in the system",
+        "At least one Job Title is configured in the Admin module"
+      ],
+      "acceptanceCriteria": [
+        "Given the Admin is on the Employee List page at /web/index.php/pim/viewEmployeeList",
+        "When the Admin selects a Job Title from the Job Title filter dropdown and clicks Search",
+        "Then the results table displays only employees assigned that Job Title",
+        "And when the selected Job Title has no assigned employees the table shows a 'No Records Found' message"
+      ],
+      "expectedOutcome": "Employee list is narrowed to employees with the selected Job Title; the empty-state message renders when no match exists",
+      "scenarioType": "REGRESSION",
+      "priority": "P1",
+      "frameworkTier": "ui",
+      "status": "active",
+      "source": "pim-functional-spec.md / How to Filter the Employee List"
+    },
+    {
+      "id": "EMP-FILTER-005",
+      "module": "employee-management",
+      "title": "Admin can filter the employee list by Subunit (Department)",
+      "preconditions": [
+        "Admin is authenticated (storageState)",
+        "At least one employee assigned to a known Subunit exists in the system",
+        "At least one Subunit is configured in the Admin module"
+      ],
+      "acceptanceCriteria": [
+        "Given the Admin is on the Employee List page at /web/index.php/pim/viewEmployeeList",
+        "When the Admin selects a Subunit from the Subunit filter dropdown and clicks Search",
+        "Then the results table displays only employees assigned to that Subunit",
+        "And when the selected Subunit has no assigned employees the table shows a 'No Records Found' message"
+      ],
+      "expectedOutcome": "Employee list is narrowed to employees in the selected Subunit; the empty-state message renders when no match exists",
+      "scenarioType": "REGRESSION",
+      "priority": "P1",
+      "frameworkTier": "ui",
+      "status": "active",
+      "source": "pim-functional-spec.md / How to Filter the Employee List"
+    },
+    {
+      "id": "EMP-FILTER-006",
+      "module": "employee-management",
+      "title": "Admin can filter the employee list by Include (current, past, or both employees)",
+      "preconditions": [
+        "Admin is authenticated (storageState)",
+        "At least one terminated (past) employee record exists in the system"
+      ],
+      "acceptanceCriteria": [
+        "Given the Admin is on the Employee List page at /web/index.php/pim/viewEmployeeList",
+        "When the Admin sets the Include filter to 'Past Employees' and clicks Search",
+        "Then the results table displays only terminated employees and no current employees",
+        "And when the Include filter is set to 'Current Employees' the results exclude past employees",
+        "And when the Include filter is set to 'Current and Past Employees' the results include both"
+      ],
+      "expectedOutcome": "The Include filter correctly scopes results to current employees, past employees, or both depending on the selected value",
+      "scenarioType": "REGRESSION",
+      "priority": "P1",
+      "frameworkTier": "ui",
+      "status": "active",
+      "source": "pim-functional-spec.md / How to Filter the Employee List"
+    },
+    {
+      "id": "EMP-FILTER-007",
+      "module": "employee-management",
+      "title": "Admin can reset Employee List filters to the default view",
+      "preconditions": [
+        "Admin is authenticated (storageState)",
+        "At least one search filter has been applied on the Employee List page"
+      ],
+      "acceptanceCriteria": [
+        "Given the Admin has applied one or more filters on the Employee List page and results are visible",
+        "When the Admin clicks the Reset button in the filter panel",
+        "Then all filter fields return to their default (empty or default-selected) values",
+        "And the results table refreshes to show the default unfiltered employee list"
+      ],
+      "expectedOutcome": "All filter fields are cleared and the employee list returns to the default unfiltered state after clicking Reset",
+      "scenarioType": "REGRESSION",
+      "priority": "P2",
+      "frameworkTier": "ui",
+      "status": "active",
+      "source": "pim-functional-spec.md / How to Filter the Employee List"
+    },
+    {
+      "id": "EMP-REPORT-TO-002",
+      "module": "employee-management",
+      "title": "Admin can add a subordinate to an employee's reporting structure",
+      "preconditions": [
+        "Admin is authenticated (storageState)",
+        "A synthetic employee record exists (created via API in test setup) to serve as the reporting manager",
+        "At least one other employee exists in the system to serve as the subordinate",
+        "At least one Reporting Method is preconfigured under PIM > Configuration > Reporting Methods",
+        "Cleanup strategy is in place: DELETE /api/v2/pim/employees after test"
+      ],
+      "acceptanceCriteria": [
+        "Given the Admin is on the Report-To tab at /web/index.php/pim/viewReportTo/empNumber/{id}",
+        "When the Admin clicks Add in the Assigned Subordinates section, types and selects an employee name, selects a Reporting Method from the dropdown, and clicks Save",
+        "Then a success notification is displayed",
+        "And the API GET /api/v2/pim/employees/{id}/report-to returns the newly assigned subordinate"
+      ],
+      "expectedOutcome": "Subordinate assignment is saved, a success notification is shown, and the subordinate is retrievable via API",
+      "scenarioType": "REGRESSION",
+      "priority": "P1",
+      "frameworkTier": "ui+api",
+      "status": "active",
+      "source": "pim-functional-spec.md / Assigning a Supervisor/Subordinate for an Employee"
+    },
+    {
+      "id": "EMP-REPORT-TO-003",
+      "module": "employee-management",
+      "title": "Admin can edit the reporting method for an assigned supervisor",
+      "preconditions": [
+        "Admin is authenticated (storageState)",
+        "A synthetic employee record exists with at least one supervisor already assigned (via API in test setup)",
+        "At least two Reporting Methods are preconfigured so a change can be made",
+        "Cleanup strategy is in place: DELETE /api/v2/pim/employees after test"
+      ],
+      "acceptanceCriteria": [
+        "Given the Admin is on the Report-To tab at /web/index.php/pim/viewReportTo/empNumber/{id}",
+        "And at least one supervisor is listed in the Assigned Supervisors section",
+        "When the Admin clicks the supervisor's name to enter edit mode, selects a different Reporting Method from the dropdown, and clicks Save",
+        "Then a success notification is displayed",
+        "And the API GET /api/v2/pim/employees/{id}/report-to returns the updated Reporting Method for that supervisor"
+      ],
+      "expectedOutcome": "The reporting method for the assigned supervisor is updated and persisted; the API reflects the change",
+      "scenarioType": "REGRESSION",
+      "priority": "P2",
+      "frameworkTier": "ui+api",
+      "status": "active",
+      "source": "pim-functional-spec.md / Editing Supervisor/Subordinate details of an Employee"
+    },
+    {
+      "id": "EMP-REPORT-TO-004",
+      "module": "employee-management",
+      "title": "Admin can remove an assigned supervisor from an employee",
+      "preconditions": [
+        "Admin is authenticated (storageState)",
+        "A synthetic employee record exists with at least one supervisor assigned (via API in test setup)",
+        "Cleanup strategy is in place: DELETE /api/v2/pim/employees after test"
+      ],
+      "acceptanceCriteria": [
+        "Given the Admin is on the Report-To tab at /web/index.php/pim/viewReportTo/empNumber/{id}",
+        "And at least one supervisor is listed in the Assigned Supervisors section",
+        "When the Admin checks the checkbox next to the supervisor and clicks the Delete button in the Assigned Supervisors section",
+        "Then a success notification is displayed",
+        "And the supervisor is removed from the Assigned Supervisors list",
+        "And the API GET /api/v2/pim/employees/{id}/report-to no longer returns that supervisor"
+      ],
+      "expectedOutcome": "The supervisor assignment is deleted, a success notification is shown, and the supervisor no longer appears in the report-to list",
+      "scenarioType": "REGRESSION",
+      "priority": "P2",
+      "frameworkTier": "ui+api",
+      "status": "active",
+      "source": "pim-functional-spec.md / Remove a Supervisor/Subordinate from an Employee"
+    },
+    {
+      "id": "EMP-CUSTOM-001",
+      "module": "employee-management",
+      "title": "Admin can create a custom field in PIM Configuration",
+      "preconditions": [
+        "Admin is authenticated (storageState)",
+        "Fewer than 10 custom fields currently exist (the instance limit is 10)",
+        "Cleanup strategy is in place: delete the custom field via the PIM Configuration UI or API after the test"
+      ],
+      "acceptanceCriteria": [
+        "Given the Admin is on the Custom Fields page at /web/index.php/pim/defineCustomFields",
+        "When the Admin clicks Add, enters a Field Name, selects a Screen from the available screens, selects a Type (Text, Number, or Drop Down), and clicks Save",
+        "Then the new custom field appears in the Defined Custom Fields list",
+        "And the field is visible on the specified employee profile screen when that screen is loaded for any employee"
+      ],
+      "expectedOutcome": "Custom field is created and appears on the configured employee profile screen; the field appears in the Defined Custom Fields list",
+      "scenarioType": "REGRESSION",
+      "priority": "P2",
+      "frameworkTier": "ui",
+      "status": "active",
+      "source": "pim-functional-spec.md / How to Create Custom Fields"
+    },
+    {
+      "id": "EMP-CUSTOM-002",
+      "module": "employee-management",
+      "title": "Admin can delete a custom field from PIM Configuration when no employee data is saved under it",
+      "preconditions": [
+        "Admin is authenticated (storageState)",
+        "At least one custom field exists that has no employee data saved under it (freshly created in test setup)",
+        "Cleanup strategy: the test itself performs the deletion; no further teardown needed for the field"
+      ],
+      "acceptanceCriteria": [
+        "Given the Admin is on the Custom Fields page at /web/index.php/pim/defineCustomFields",
+        "And at least one custom field is listed that has no employee data saved under it",
+        "When the Admin checks the checkbox in front of that custom field and clicks Delete",
+        "Then the custom field is removed from the Defined Custom Fields list",
+        "And the field no longer appears on the employee profile screen it was assigned to"
+      ],
+      "expectedOutcome": "The custom field is permanently deleted and no longer visible in the custom field list or on the employee profile screen",
+      "scenarioType": "REGRESSION",
+      "priority": "P2",
+      "frameworkTier": "ui",
+      "status": "active",
+      "source": "pim-functional-spec.md / How to Create Custom Fields"
+    },
+    {
+      "id": "EMP-CUSTOM-003",
+      "module": "employee-management",
+      "title": "Admin can edit a custom field in PIM Configuration",
+      "preconditions": [
+        "Admin is authenticated (storageState)",
+        "At least one custom field exists (created in test setup)",
+        "Cleanup strategy is in place: delete the custom field via UI after the test"
+      ],
+      "acceptanceCriteria": [
+        "Given the Admin is on the Custom Fields page at /web/index.php/pim/defineCustomFields",
+        "When the Admin clicks the name of an existing custom field to open it in edit mode",
+        "And updates the Field Name, Screen, or Select Options fields and clicks Save",
+        "Then the updated values are reflected in the Defined Custom Fields list",
+        "And the field on the employee profile screen reflects the updated configuration"
+      ],
+      "expectedOutcome": "Custom field is updated with new Field Name, Screen, or Select Options values and changes are visible in the list and on the employee profile screen",
+      "scenarioType": "REGRESSION",
+      "priority": "P2",
+      "frameworkTier": "ui",
+      "status": "active",
+      "source": "pim-functional-spec.md / How to Create Custom Fields — owner confirmed: Field Name, Screen, and Select Options are editable"
+    },
+    {
+      "id": "EMP-REPORTS-001",
+      "module": "employee-management",
+      "title": "Admin can create a custom PIM report with selection criteria and display fields",
+      "preconditions": [
+        "Admin is authenticated (storageState)",
+        "Admin navigates to PIM > Reports",
+        "Cleanup strategy is in place: delete the created report via the PIM Reports UI after the test"
+      ],
+      "acceptanceCriteria": [
+        "Given the Admin is on the PIM Reports page at /web/index.php/pim/viewDefinedPredefinedReports",
+        "When the Admin clicks Add, enters a unique Report Name, adds at least one Selection Criteria field, selects 'Active Employees Only' (or 'Inactive' or 'Both'), adds at least one Display Field Group and a Display Field under it, and clicks Save",
+        "Then the report is saved and the Admin is returned to the PIM Reports list",
+        "And the newly created report appears in the list",
+        "And searching by the report's name in the Report Name filter returns only that report"
+      ],
+      "expectedOutcome": "Custom PIM report is created and appears in the reports list; it can be located using the Report Name search filter",
+      "scenarioType": "REGRESSION",
+      "priority": "P2",
+      "frameworkTier": "ui",
+      "status": "active",
+      "source": "pim-functional-spec.md / How to Create Dynamic Reports"
+    },
+    {
+      "id": "EMP-REPORT-TO-005",
+      "module": "employee-management",
+      "title": "Admin can remove an assigned subordinate from an employee",
+      "preconditions": [
+        "Admin is authenticated (storageState)",
+        "A synthetic employee record exists with at least one subordinate assigned (via API in test setup)",
+        "Cleanup strategy is in place: DELETE /api/v2/pim/employees after test"
+      ],
+      "acceptanceCriteria": [
+        "Given the Admin is on the Report-To tab at /web/index.php/pim/viewReportTo/empNumber/{id}",
+        "And at least one subordinate is listed in the Assigned Subordinates section",
+        "When the Admin checks the checkbox next to the subordinate and clicks the Delete button in the Assigned Subordinates section",
+        "Then a success notification is displayed",
+        "And the subordinate is removed from the Assigned Subordinates list",
+        "And the API GET /api/v2/pim/employees/{id}/report-to no longer returns that subordinate"
+      ],
+      "expectedOutcome": "The subordinate assignment is deleted, a success notification is shown, and the subordinate no longer appears in the report-to list",
+      "scenarioType": "REGRESSION",
+      "priority": "P2",
+      "frameworkTier": "ui+api",
+      "status": "active",
+      "source": "pim-functional-spec.md / Remove a Supervisor/Subordinate from an Employee"
+    }
+  ]
 }

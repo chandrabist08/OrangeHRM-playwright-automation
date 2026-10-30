@@ -1,2 +1,16 @@
-<testsuites id="" name="" tests="0" failures="0" skipped="0" errors="0" time="0.00958699999999999">
+<testsuites id="" name="" tests="4" failures="0" skipped="0" errors="0" time="20.272199">
+<testsuite name="..\support\setup\admin.setup.ts" timestamp="2026-10-30T10:31:42.821Z" hostname="setup" tests="1" failures="0" skipped="0" time="5.385" errors="0">
+<testcase name="authenticate as admin" classname="..\support\setup\admin.setup.ts" time="5.385">
+</testcase>
+</testsuite>
+<testsuite name="auth\auth.spec.ts" timestamp="2026-10-30T10:31:42.821Z" hostname="chromium" tests="2" failures="0" skipped="0" time="12.105" errors="0">
+<testcase name="[AUTH-LOGIN-001] Admin can log in with valid credentials" classname="auth\auth.spec.ts" time="4.795">
+</testcase>
+<testcase name="[AUTH-LOGOUT-001] Authenticated user can log out and session is invalidated" classname="auth\auth.spec.ts" time="7.31">
+</testcase>
+</testsuite>
+<testsuite name="auth\auth.spec.ts" timestamp="2026-10-30T10:31:42.821Z" hostname="no-auth" tests="1" failures="0" skipped="0" time="5.218" errors="0">
+<testcase name="[AUTH-LOGIN-002] Login fails with invalid credentials and shows an error" classname="auth\auth.spec.ts" time="5.218">
+</testcase>
+</testsuite>
 </testsuites>
