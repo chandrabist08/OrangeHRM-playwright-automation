@@ -39,7 +39,8 @@ async function runScanAll() {
 }
 
 async function runCiMode(baseRef) {
-  const diff = execSync(`git diff origin/${baseRef} --name-only`, { encoding: 'utf8' });
+  const ref = baseRef.startsWith('origin/') ? baseRef : `origin/${baseRef}`;
+  const diff = execSync(`git diff ${ref} --name-only`, { encoding: 'utf8' });
   const files = diff.split('\n').filter((f) => /^playwright\/.*\.[mc]?[jt]s$/.test(f));
   const allViolations = [];
   for (const file of files) {

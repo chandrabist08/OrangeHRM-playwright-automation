@@ -11,7 +11,7 @@ export interface NavigationHelpers {
 export function createNavigationHelpers(page: Page): NavigationHelpers {
   return {
     async goTo(route: string) {
-      await page.goto(ROUTES[route] ?? route);
+      await page.goto(((ROUTES as Record<string, unknown>)[route] as string) ?? route);
     },
 
     async goToUrl(url) {

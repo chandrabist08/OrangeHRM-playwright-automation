@@ -1,9 +1,23 @@
 node_modules/
 dist/
 .env
+
+# Auth storage state — contains session tokens, never commit
+playwright/storage/auth/*.json
+
+# Test output — generated on each run
+evidence/test-output/
+evidence/reports/
+evidence/summary.json
+evidence/test-output/.last-run.json
+
+# Playwright artifacts
+playwright-report/
+test-results/
+.playwright-artifacts-*/
+*.webm
+
+# Allure
 allure-results/*
 !allure-results/categories.json
 allure-report/
-playwright-report/
-test-results/
-playwright/storage/auth/*.json

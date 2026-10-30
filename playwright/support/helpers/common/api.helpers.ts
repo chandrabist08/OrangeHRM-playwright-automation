@@ -30,7 +30,7 @@ export function createApiHelpers(page: Page, request: APIRequestContext): ApiHel
   }
 
   function resolveEndpoint(endpoint: string): string {
-    return API_ENDPOINTS[endpoint] ?? endpoint;
+    return ((API_ENDPOINTS as Record<string, unknown>)[endpoint] as string) ?? endpoint;
   }
 
   return {
