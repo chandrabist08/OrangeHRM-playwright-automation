@@ -25,6 +25,9 @@ jobs:
           BASE_URL: ${{ secrets.QA_BASE_URL }}
           API_BASE_URL: ${{ secrets.QA_API_BASE_URL }}
           API_TOKEN: ${{ secrets.QA_API_TOKEN }}
+          ADMIN_USERNAME: ${{ secrets.ADMIN_USERNAME }}
+          ADMIN_PASSWORD: ${{ secrets.ADMIN_PASSWORD }}
+          ADMIN_AUTH_STATE: playwright/storage/auth/admin.json
           PW_RETRIES: 2
           CI: true
       - uses: actions/upload-artifact@v4
