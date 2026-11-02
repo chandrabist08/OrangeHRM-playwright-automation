@@ -13,7 +13,7 @@
 export const EMPLOYEE_UI = {
   list: {
     /** getByPlaceholder() — employee name typeahead */
-    searchByName: 'Type for hints…',
+    searchByName: 'Type for hints...',
     /** getByLabel() — employee ID search field */
     searchById: 'Employee Id',
     /** getByRole('button') */
@@ -33,7 +33,7 @@ export const EMPLOYEE_UI = {
     /** getByLabel() — sub-unit (department) dropdown in search panel */
     subunitFilter: 'Sub Unit',
     /** getByPlaceholder() — supervisor name typeahead in search panel */
-    supervisorFilter: 'Type for hints…',
+    supervisorFilter: 'Type for hints...',
     /** getByRole('cell') — empty state message text */
     noRecordsFound: 'No Records Found',
   },
@@ -47,16 +47,17 @@ export const EMPLOYEE_UI = {
     lastName: 'Last Name',
     /** getByLabel() */
     employeeId: 'Employee Id',
-    /** getByRole('checkbox', { name }) — toggles the login details section */
+    /** locator('.oxd-switch-input') — visual toggle that reveals login details section */
     createLoginToggle: 'Create Login Details',
-    /** getByRole('textbox', { name }) — within login details section */
+    /** getByRole('textbox').nth(5) — no formal label; 6th textbox on the add-employee page */
     usernameLabel: 'Username',
-    /** getByLabel() — within login details section */
+    /** locator('input[type="password"]').first() — no formal label */
     passwordLabel: 'Password',
-    /** getByLabel() — within login details section */
+    /** locator('input[type="password"]').nth(1) — no formal label */
     confirmPasswordLabel: 'Confirm Password',
-    /** getByLabel() — enabled/disabled status within login details section */
-    statusSelect: 'Status',
+    /** getByRole('radio', { name }) — status is radio buttons, not a dropdown */
+    statusEnabled: 'Enabled',
+    statusDisabled: 'Disabled',
     /** getByRole('button') */
     saveButton: 'Save',
   },
@@ -75,10 +76,10 @@ export const EMPLOYEE_UI = {
     /** getByRole('button') */
     cancelButton: 'Cancel',
     /**
-     * getByText() partial match — success toast text always begins with "Successfully".
-     * Use: page.getByText(EMPLOYEE_UI.shared.successToast)
+     * getByText() exact match — the success toast title element.
+     * Use: page.getByText(EMPLOYEE_UI.shared.successToast, { exact: true })
      */
-    successToast: 'Successfully',
+    successToast: 'Success',
     /**
      * CSS class for inline validation error messages.
      * Use: page.locator(EMPLOYEE_UI.shared.validationError)
@@ -112,6 +113,10 @@ export const EMPLOYEE_UI = {
     homeEmail: 'Home Email',
     /** getByLabel() */
     workTelephone: 'Work Telephone',
+    /** CSS locator from codegen — work email input */
+    workEmailCss: 'div:nth-child(9) > .oxd-grid-3 > div > .oxd-input-group > div:nth-child(2) > .oxd-input',
+    /** CSS locator from codegen — work telephone input */
+    workTelephoneCss: 'div:nth-child(6) > .oxd-grid-3 > div:nth-child(3) > .oxd-input-group > div:nth-child(2) > .oxd-input',
   },
 
   emergencyContacts: {
@@ -125,6 +130,8 @@ export const EMPLOYEE_UI = {
     workTelephone: 'Work Telephone',
     /** getByLabel() */
     mobile: 'Mobile',
+    /** nth indices from codegen — no ARIA labels on these inputs */
+    nth: { name: 1, relationship: 2, homeTelephone: 3, workTelephone: 4, mobile: 5 },
   },
 
   dependants: {
@@ -156,7 +163,7 @@ export const EMPLOYEE_UI = {
     /** getByRole('textbox', { name }) — inside termination dialog */
     terminationNote: 'Note',
     /** getByRole('button') — inside termination dialog */
-    confirmTerminateButton: 'Confirm',
+    confirmTerminateButton: 'Save',
   },
 
   salary: {
@@ -174,7 +181,7 @@ export const EMPLOYEE_UI = {
 
   reportTo: {
     /** getByPlaceholder() — name typeahead inside Report-To section */
-    nameSearch: 'Type for hints…',
+    nameSearch: 'Type for hints...',
     /** getByLabel() */
     reportingMethodSelect: 'Reporting Method',
   },
@@ -238,22 +245,24 @@ export const EMPLOYEE_UI = {
     /** getByLabel() */
     screenSelect: 'Screen',
     /** getByLabel() */
-    typeSelect: 'Field Type',
+    typeSelect: 'Type',
     /** getByRole('button') */
     saveButton: 'Save',
+    /** getByRole('button') */
+    deleteButton: 'Delete Selected',
   },
 
   reports: {
     /** getByRole('button') */
     addButton: 'Add',
-    /** getByLabel() or getByRole('textbox', { name }) */
-    reportNameInput: 'Report Name',
+    /** getByPlaceholder() — Report Name textbox has no formal label association */
+    reportNamePlaceholder: 'Type here',
     /** getByLabel() — active/inactive/both employees within report definition */
     includeSelect: 'Include',
-    /** getByLabel() */
-    displayFieldGroupsSelect: 'Display Field Groups',
-    /** getByLabel() */
-    displayFieldsSelect: 'Display Fields',
+    /** getByText() — placeholder text shown in the Display Field Group dropdown trigger */
+    displayFieldGroupsSelect: 'Select Display Field Group',
+    /** getByText() — placeholder text shown in the Display Fields dropdown trigger */
+    displayFieldsSelect: 'Select Display Field',
     /** getByRole('button') */
     saveButton: 'Save',
   },

@@ -13,9 +13,8 @@ Session/cookie login via `/web/index.php/auth/login`.
 Auth state stored via Playwright `storageState` — never login inside `beforeEach`.
 
 ## Key user roles
-- **Admin** — full system access (HR configuration, user management)
-- **ESS (Employee Self Service)** — limited access to own profile, leave, attendance
-- **Supervisor** — manages team leave approvals and attendance
+- **Admin** — full system access (HR configuration, user management), admin can perform all type of functionality available in the system
+
 
 ## Base URL (staging)
 https://opensource-demo.orangehrmlive.com
