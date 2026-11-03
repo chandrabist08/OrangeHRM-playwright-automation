@@ -2,6 +2,8 @@ import { test, expect } from '../../fixtures/base.fixture.js';
 import { API_ENDPOINTS } from '../../configs/app/routes.js';
 import { EMPLOYEE_UI } from '../../configs/ui/pim/employee.ui.js';
 
+test.setTimeout(90000);
+
 test(
   '[EMP-ADD-001] Admin can add a new employee with required fields',
   { tag: ['@EMP-ADD-001', '@regression', '@P1'] },

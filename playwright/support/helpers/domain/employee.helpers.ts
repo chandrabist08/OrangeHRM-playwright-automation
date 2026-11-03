@@ -284,6 +284,7 @@ export function createEmployeeHelpers(page: Page, request: APIRequestContext): E
 
     async goToReportTo(empNumber: number): Promise<void> {
       await page.goto(ROUTES.pim.reportTo(empNumber));
+      await page.locator('.oxd-form-loader').waitFor({ state: 'hidden', timeout: 15000 }).catch(() => {});
     },
 
     async goToQualifications(empNumber: number): Promise<void> {
@@ -313,7 +314,8 @@ export function createEmployeeHelpers(page: Page, request: APIRequestContext): E
     },
 
     async searchById(id: string): Promise<void> {
-      await page.getByLabel(EMPLOYEE_UI.list.searchById).fill(id);
+      await page.locator('.oxd-input-group', { hasText: EMPLOYEE_UI.list.searchById })
+        .locator('.oxd-input').fill(id);
     },
 
     async clickSearch(): Promise<void> {
@@ -352,7 +354,9 @@ export function createEmployeeHelpers(page: Page, request: APIRequestContext): E
     },
 
     async expectNoRecordsFound(): Promise<void> {
-      await expect(page.getByText(EMPLOYEE_UI.list.noRecordsFound).first()).toBeVisible();
+      // Wait for any loading overlay to clear before asserting empty state
+      await page.locator('.oxd-loading-spinner').waitFor({ state: 'hidden', timeout: 10000 }).catch(() => {});
+      await expect(page.getByText(EMPLOYEE_UI.list.noRecordsFound).first()).toBeVisible({ timeout: 15000 });
     },
 
     async expectRowsVisible(): Promise<void> {
@@ -603,9 +607,10 @@ export function createEmployeeHelpers(page: Page, request: APIRequestContext): E
       const row = page.getByRole('row').filter({ hasText: oldName });
       await row.getByRole('button').nth(1).click();
       await page.waitForURL('**/saveCustomFields/**');
+      await page.locator('.oxd-form-loader').waitFor({ state: 'hidden', timeout: 15000 }).catch(() => {});
       const nameInput = page.locator('form').getByRole('textbox');
-      await nameInput.clear();
       await nameInput.fill(newName);
+      await nameInput.press('Tab');
       await page.getByRole('button', { name: EMPLOYEE_UI.customFields.saveButton }).click();
     },
 

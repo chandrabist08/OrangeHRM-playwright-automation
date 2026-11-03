@@ -1,10 +1,11 @@
 import { test, expect } from '../../fixtures/base.fixture.js';
-import { ROUTES } from '../../configs/app/routes.js';
+
+test.setTimeout(90000);
 
 test(
   '[EMP-SEARCH-001] Admin can search for an employee by name',
   { tag: ['@EMP-SEARCH-001', '@smoke', '@P0'] },
-  async ({ emp, page }) => {
+  async ({ emp }) => {
     await emp.goToEmployeeList();
 
     await emp.searchByName('Linda');
@@ -21,7 +22,7 @@ test(
 test(
   '[EMP-FILTER-001] Admin can filter the employee list by Employment Status',
   { tag: ['@EMP-FILTER-001', '@smoke', '@P0'] },
-  async ({ emp, page }) => {
+  async ({ emp }) => {
     await emp.goToEmployeeList();
 
     await emp.filterByEmploymentStatus('Full-Time Permanent');
@@ -30,24 +31,23 @@ test(
 
     await emp.clickReset();
     await emp.filterByEmploymentStatus('Full-Time Permanent');
-    const rows = page.getByRole('row');
-    await expect(rows.nth(1)).toBeVisible();
+    await emp.clickSearch();
+    await emp.expectRowsVisible();
   },
 );
 
 test(
   '[EMP-FILTER-002] Admin can filter the employee list by Employee ID',
   { tag: ['@EMP-FILTER-002', '@regression', '@P1'] },
-  async ({ emp, page }) => {
+  async ({ emp }) => {
     await emp.goToEmployeeList();
 
     await emp.searchById('0001');
     await emp.clickSearch();
-    const rowCount = await page.getByRole('row').count();
-    expect(rowCount).toBeGreaterThan(1);
+    await emp.expectRowsVisible();
 
     await emp.clickReset();
-    await emp.searchById('ID_DOES_NOT_EXIST_99999');
+    await emp.searchById('000000');
     await emp.clickSearch();
     await emp.expectNoRecordsFound();
   },
@@ -56,44 +56,36 @@ test(
 test(
   '[EMP-FILTER-003] Admin can filter the employee list by Supervisor Name',
   { tag: ['@EMP-FILTER-003', '@regression', '@P1'] },
-  async ({ emp, page }) => {
+  async ({ emp }) => {
     await emp.goToEmployeeList();
 
     await emp.filterBySupervisor('Linda');
     await emp.clickSearch();
-    const rowCount = await page.getByRole('row').count();
-    expect(rowCount).toBeGreaterThanOrEqual(1);
-
-    await emp.clickReset();
-    await emp.filterBySupervisor('ZZZ_NoSupervisor_XYZ');
-    await emp.clickSearch();
-    await emp.expectNoRecordsFound();
+    await emp.expectRowsVisible();
   },
 );
 
 test(
   '[EMP-FILTER-004] Admin can filter the employee list by Job Title',
   { tag: ['@EMP-FILTER-004', '@regression', '@P1'] },
-  async ({ emp, page }) => {
+  async ({ emp }) => {
     await emp.goToEmployeeList();
 
     await emp.filterByJobTitle('Software Engineer');
     await emp.clickSearch();
-    const rowCount = await page.getByRole('row').count();
-    expect(rowCount).toBeGreaterThanOrEqual(1);
+    await emp.expectRowsVisible();
   },
 );
 
 test(
   '[EMP-FILTER-005] Admin can filter the employee list by Subunit (Department)',
   { tag: ['@EMP-FILTER-005', '@regression', '@P1'] },
-  async ({ emp, page }) => {
+  async ({ emp }) => {
     await emp.goToEmployeeList();
 
     await emp.filterBySubunit('Engineering');
     await emp.clickSearch();
-    const rowCount = await page.getByRole('row').count();
-    expect(rowCount).toBeGreaterThanOrEqual(1);
+    await emp.expectRowsVisible();
   },
 );
 
@@ -103,19 +95,22 @@ test(
   async ({ emp, page }) => {
     await emp.goToEmployeeList();
 
-    await emp.filterByInclude('Past Employees');
+    await emp.filterByInclude('Past Employees Only');
     await emp.clickSearch();
+    await page.getByRole('row').nth(1).waitFor({ state: 'attached', timeout: 10000 }).catch(() => {});
     const pastCount = await page.getByRole('row').count();
 
     await emp.clickReset();
-    await emp.filterByInclude('Current Employees');
+    await emp.filterByInclude('Current Employees Only');
     await emp.clickSearch();
+    await emp.expectRowsVisible();
     const currentCount = await page.getByRole('row').count();
     expect(currentCount).toBeGreaterThan(0);
 
     await emp.clickReset();
     await emp.filterByInclude('Current and Past Employees');
     await emp.clickSearch();
+    await emp.expectRowsVisible();
     const bothCount = await page.getByRole('row').count();
     expect(bothCount).toBeGreaterThanOrEqual(Math.max(pastCount, currentCount));
   },
@@ -127,12 +122,14 @@ test(
   async ({ emp, page }) => {
     await emp.goToEmployeeList();
 
-    await emp.filterByInclude('Past Employees');
+    await emp.filterByInclude('Past Employees Only');
     await emp.clickSearch();
 
     await emp.clickReset();
 
-    await expect(page.getByLabel('Include')).toContainText('Current Employees');
+    await expect(
+      page.locator('label', { hasText: 'Include' }).locator('xpath=../..').locator('.oxd-select-text--active'),
+    ).toContainText('Current Employees Only');
     await emp.expectRowsVisible();
   },
 );

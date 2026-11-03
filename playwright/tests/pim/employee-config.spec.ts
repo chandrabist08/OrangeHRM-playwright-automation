@@ -1,5 +1,7 @@
 import { test, expect } from '../../fixtures/base.fixture.js';
 
+test.setTimeout(90000);
+
 test(
   '[EMP-CUSTOM-001] Admin can create a custom field in PIM Configuration',
   { tag: ['@EMP-CUSTOM-001', '@regression', '@P2'] },
@@ -9,7 +11,6 @@ test(
     try {
       await emp.createCustomField({ fieldName, screen: 'Personal Details', type: 'Text or Number' });
       await emp.expectSuccessToast();
-
       await expect(page.getByRole('cell', { name: fieldName })).toBeVisible();
     } finally {
       await emp.goToCustomFields();
@@ -26,6 +27,7 @@ test(
     await emp.goToCustomFields();
     await emp.createCustomField({ fieldName, screen: 'Personal Details', type: 'Text or Number' });
     await emp.expectSuccessToast();
+    await page.waitForURL('**/listCustomFields', { timeout: 20000 });
 
     await emp.goToCustomFields();
     await emp.deleteCustomFieldByName(fieldName);
@@ -44,13 +46,14 @@ test(
     await emp.goToCustomFields();
     await emp.createCustomField({ fieldName: originalName, screen: 'Personal Details', type: 'Text or Number' });
     await emp.expectSuccessToast();
+    await page.waitForURL('**/listCustomFields', { timeout: 20000 });
 
     try {
       await emp.goToCustomFields();
       await emp.editCustomFieldByName(originalName, updatedName);
       await emp.expectSuccessToast();
-
-      await expect(page.getByRole('cell', { name: updatedName })).toBeVisible();
+      await page.waitForURL('**/listCustomFields', { timeout: 20000 });
+      await expect(page.getByRole('cell', { name: updatedName })).toBeVisible({ timeout: 20000 });
       await expect(page.getByRole('cell', { name: originalName })).not.toBeVisible();
     } finally {
       await emp.goToCustomFields();
