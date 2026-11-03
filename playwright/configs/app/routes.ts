@@ -9,7 +9,7 @@ export const ROUTES = {
     personalDetails: (empNumber: number) =>
       `/web/index.php/pim/viewPersonalDetails/empNumber/${empNumber}`,
     contactDetails: (empNumber: number) =>
-      `/web/index.php/pim/viewContactDetails/empNumber/${empNumber}`,
+      `/web/index.php/pim/contactDetails/empNumber/${empNumber}`,
     emergencyContacts: (empNumber: number) =>
       `/web/index.php/pim/viewEmergencyContacts/empNumber/${empNumber}`,
     dependants: (empNumber: number) => `/web/index.php/pim/viewDependants/empNumber/${empNumber}`,
@@ -20,7 +20,7 @@ export const ROUTES = {
       `/web/index.php/pim/viewQualifications/empNumber/${empNumber}`,
     memberships: (empNumber: number) => `/web/index.php/pim/viewMembership/empNumber/${empNumber}`,
     immigration: (empNumber: number) => `/web/index.php/pim/viewImmigration/empNumber/${empNumber}`,
-    customFields: '/web/index.php/pim/defineCustomFields',
+    customFields: '/web/index.php/pim/listCustomFields',
     defineReport: '/web/index.php/pim/defineReport',
     reports: '/web/index.php/pim/viewDefinedPredefinedReports',
     terminationReasons: '/web/index.php/pim/viewTerminationReasons',

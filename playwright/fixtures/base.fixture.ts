@@ -8,6 +8,10 @@ import { createUiHelpers, type UiHelpers } from '../support/helpers/common/ui.he
 import { createApiHelpers, type ApiHelpers } from '../support/helpers/common/api.helpers.js';
 import { createHarHelpers, type HarHelpers } from '../support/helpers/common/har.helpers.js';
 import { createAuthHelpers, type AuthHelpers } from '../support/helpers/domain/auth.helpers.js';
+import {
+  createEmployeeHelpers,
+  type EmployeeHelpers,
+} from '../support/helpers/domain/employee.helpers.js';
 
 type HarnessFixtures = {
   nav: NavigationHelpers;
@@ -15,6 +19,7 @@ type HarnessFixtures = {
   api: ApiHelpers;
   har: HarHelpers;
   auth: AuthHelpers;
+  emp: EmployeeHelpers;
   evidence: void;
 };
 
@@ -86,6 +91,13 @@ export const test = base.extend<HarnessFixtures>({
 
   auth: async ({ page }: { page: Page }, use: (h: AuthHelpers) => Promise<void>) => {
     await use(createAuthHelpers(page));
+  },
+
+  emp: async (
+    { page, request }: { page: Page; request: APIRequestContext },
+    use: (h: EmployeeHelpers) => Promise<void>,
+  ) => {
+    await use(createEmployeeHelpers(page, request));
   },
 });
 
