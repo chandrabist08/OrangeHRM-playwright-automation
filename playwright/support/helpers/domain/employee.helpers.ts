@@ -609,8 +609,9 @@ export function createEmployeeHelpers(page: Page, request: APIRequestContext): E
       await page.waitForURL('**/saveCustomFields/**');
       await page.locator('.oxd-form-loader').waitFor({ state: 'hidden', timeout: 15000 }).catch(() => {});
       const nameInput = page.locator('form').getByRole('textbox');
-      await nameInput.fill(newName);
-      await nameInput.press('Tab');
+      await nameInput.click();
+      await nameInput.press('Control+a');
+      await nameInput.pressSequentially(newName);
       await page.getByRole('button', { name: EMPLOYEE_UI.customFields.saveButton }).click();
     },
 
