@@ -2,6 +2,7 @@ import { test, expect } from '../../fixtures/base.fixture.js';
 import { EMPLOYEE_UI } from '../../configs/ui/pim/employee.ui.js';
 
 test.setTimeout(90000);
+test.use({ navigationTimeout: 30000 });
 import * as fs from 'fs';
 import * as path from 'path';
 import * as os from 'os';

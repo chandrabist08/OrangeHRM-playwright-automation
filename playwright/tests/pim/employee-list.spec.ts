@@ -1,6 +1,7 @@
 import { test, expect } from '../../fixtures/base.fixture.js';
 
 test.setTimeout(90000);
+test.use({ navigationTimeout: 30000 });
 
 test(
   '[EMP-SEARCH-001] Admin can search for an employee by name',
