@@ -25,6 +25,7 @@ Config → Helpers → Fixture → Tests
 | Helpers | `playwright/support/helpers/` | Flat action functions — no classes |
 | Fixture | `playwright/fixtures/base.fixture.ts` | Injects helpers into tests |
 | Tests | `playwright/tests/` | Thin orchestration — one behaviour per test |
+| Auth setup | `playwright/support/setup/` | `storageState` login setup |
 
 ---
 
@@ -60,7 +61,7 @@ Config → Helpers → Fixture → Tests
 │   ├── support/
 │   │   ├── helpers/common/         # nav, ui, api, har, db helpers
 │   │   └── setup/                  # storageState auth setup
-│   └── tests/                      # Spec files (empty until GATHER → BUILD)
+│   └── tests/                      # Spec files (auth, pim modules built)
 ├── scripts/
 │   └── engine/                     # CLI rule validator, evidence builder, sync
 ├── harness.config.json             # Single source of truth for rules + agents
@@ -87,16 +88,16 @@ npx playwright install
 
 ### 3. Configure environment
 
-```bash
-cp .env.example .env
-```
-
-Edit `.env`:
+Create a `.env` file in the project root:
 
 ```env
 ENV=qa
 BASE_URL=https://your-app.com
 API_BASE_URL=https://your-api.com
+API_TOKEN=your-api-token
+ADMIN_USERNAME=your-admin-user
+ADMIN_PASSWORD=your-admin-password
+ADMIN_AUTH_STATE=playwright/storage/auth/admin.json
 ```
 
 ### 4. Verify the harness
@@ -296,5 +297,8 @@ GitHub Actions runs on every push and pull request:
 
 | Secret | Description |
 |--------|-------------|
-| `BASE_URL` | App URL for the target environment |
-| `API_BASE_URL` | API base URL |
+| `QA_BASE_URL` | App URL for the QA environment |
+| `QA_API_BASE_URL` | API base URL for the QA environment |
+| `QA_API_TOKEN` | API authentication token |
+| `ADMIN_USERNAME` | Admin account username for auth setup |
+| `ADMIN_PASSWORD` | Admin account password for auth setup |

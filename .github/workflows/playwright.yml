@@ -1,15 +1,17 @@
 name: Playwright Tests
-
+# when to run the workflow
 on:
   push:
     branches: [main, master, develop]
   pull_request:
     branches: [main, master, develop]
 
+
+# what to do when the workflow is triggered
 jobs:
   verify:
     name: Verify harness
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-latest # Spins up a clean Linux virtual machine
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4
@@ -31,7 +33,7 @@ jobs:
           PW_RETRIES: 2
           CI: true
       - uses: actions/upload-artifact@v4
-        if: always()
+        if: always()  # Saves report whether tests pass or fail
         with:
           name: evidence
           path: evidence/
